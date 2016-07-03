@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title><%= title %></title>
+</head>
+
+<body>
+<h1><%= title %></h1>
+<canvas id="c" width="601" height="551"></canvas><br>
+
+<p id="h0" hidden><%= h0 %></p> <!-- use hidden paragraphs to embed bound variables from routes -->
+
+<p>&phi;:
+    <input id="phi" type="range" style="width:530px;vertical-align:middle;margin-left:3px;padding:0;cursor:pointer"
+           min="0" max="360" value="0" step="1"
+           oninput="setphi()"/>
+    <output id="phiout" for="phi" style="text-align:right;" >0°</output><br></p>
+
+
+<script src="https://gitcdn.xyz/repo/goessner/g2/master/g2.min.js"></script>
+<script src="https://gitcdn.xyz/repo/goessner/g2-mec/master/g2.mec.min.js"></script>
+
+
+<script>
+    var pi = Math.PI,
+            ctx = document.getElementById("c").getContext("2d"),
+            g = g2(),
+            phi = 0, psi = 0, h0 = +document.getElementById('h0').innerHTML, // assign value of <p> and convert to number
+            dh,
+            A = {x:200, y:450, w:pi}, B = {x:400, y:450},
+            P1, P2, R1 = 40, R2 = 80
+            ;
+
+    function setphi() {
+        phi = +document.getElementById("phi").value;
+        document.getElementById("phiout").value = phi + '°';
+        phi *= pi/180;
+        requestAnimationFrame(render);
+    }
+
+    function render() {
+        dh = R1*phi/2;
+        psi = - phi/4;
+        P1 = {x:400, y:450, w:phi};
+        P2 = {x:280, y:450 - h0 - dh, w:psi};
+
+        g.del().cartesian()
+                .clr()
+                .grid()
+
+                .rope(P1,R1,P2,R2)
+                .rope(P2,-R2,A)
+                .pulley2(P1,R1)
+                .pulley2(P2,R2)
+                .use("nodfix",A)
+                .use("nodfix",B)
+                .use("nod",P2)
+
+                .exe(ctx);
+    }
+
+    render();
+
+</script>
+</body>
+</html>

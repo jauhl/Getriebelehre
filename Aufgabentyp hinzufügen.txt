@@ -1,0 +1,26 @@
+1. app.js
+
+add:
+
+var seilmec = require('./routes/seilmec');   	<- js Datei in routes ordner
+
+app.use('/seilmec', seilmec);			<- Verknüpfung url mit var
+
+
+
+2. 
+
+copy/paste Datei (als Template) in Ordner "/routes" und rename zu *Aufgabentyp*.js  
+
+
+
+3.
+
+create new file in Ordner /views *Aufgabentyp*.ejs und paste *Aufgabentyp*.html contents als template in den file
+
+Für jede zu ändernde variable hidden paragraph erstellen: 
+<p id="*variable*" hidden><%= *name als *Aufgabentyp*.js local*  %></p>  
+
+nach number konvertierten Wert der Scriptvaraible zuweisen:
+*variable* = +document.getElementById('*variable*').innerHTML
+ 
