@@ -9,8 +9,6 @@
 <h1><%= title %></h1>
 <canvas id="c" width="601" height="551"></canvas><br>
 
-<p id="h0" hidden><%= h0 %></p> <!-- use hidden paragraphs to embed bound variables from routes -->
-
 <p>&phi;:
     <input id="phi" type="range" style="width:530px;vertical-align:middle;margin-left:3px;padding:0;cursor:pointer"
            min="0" max="360" value="0" step="1"
@@ -26,7 +24,7 @@
     var pi = Math.PI,
             ctx = document.getElementById("c").getContext("2d"),
             g = g2(),
-            phi = 0, psi = 0, h0 = +document.getElementById('h0').innerHTML, // assign value of <p> and convert to number
+            phi = 0, psi = 0, h0 = <%= h0 %>, // assign value of h0 property from route
             dh,
             A = {x:200, y:450, w:pi}, B = {x:400, y:450},
             P1, P2, R1 = 40, R2 = 80
