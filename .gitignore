@@ -49,3 +49,4 @@ Temporary Items
 # User defined
 /.idea/
 /node_modules/
+/views/backup/
