@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title><%= title %></title>
+</head>
+
+<body>
+<h1><%= title %></h1>
+<canvas id="cv" width="501" height="401"></canvas>
+<br>
+<p>&phi;:
+    <input id="range" type="range" style="width:600px;vertical-align:middle;margin-left:3px;padding:0" min="0" max="360"
+           value="0" step="1"/>
+    <output id="output" for="range" style="text-align:right;">0</output>
+    <br></p>
+
+<p id="a"></p>
+<p id="b"></p>
+<p id="c"></p>
+<p id="d"></p>
+
+<script src="https://gitcdn.xyz/repo/goessner/g2/master/g2.min.js"></script>
+<script src="https://gitcdn.xyz/repo/goessner/g2-mec/master/g2.mec.min.js"></script>
+
+
+<script>
+    var     cnv = document.getElementById("cv"),
+            ctx = cnv.getContext("2d"),
+            range = document.getElementById("range"),
+            output = document.getElementById("output"),
+
+            a = <%= a %>, b = <%= b %>, c = <%= c %>, d = <%= d %>, e = <%= e %>,
+            A0 = {x: 0, y: 0},
+
+            phi = 0,
+
+            mec = {
+                get ephi() {
+                    return {x: Math.cos(phi), y: Math.sin(phi)};
+                },
+
+                get g() {
+                    return {x: this.d2*this.ealpha.x - a*this.ephi.x, y:  this.d2*this.ealpha.y - a*this.ephi.y};
+                },
+
+                get gg() {
+                    return a*a + d*d - 2*a*this.d2*Math.cos(this.alpha - phi);
+                },
+
+                get d2() {
+                    return Math.sqrt(d*d+e*e);
+                },
+
+                get alpha() {
+                    return Math.atan(e/d);
+                },
+
+                get ealpha() {
+                    return {x: Math.cos(this.alpha), y: Math.sin(this.alpha)};
+                },
+
+                get theta() {
+                    var gg = this.gg, bb_gg = (b*b)/gg, g = this.g,
+                            lambda = 0.5 * (bb_gg - c*c/gg + 1),
+                            mue = Math.sqrt(bb_gg - lambda * lambda);
+                    return Math.atan2((1/b) * (lambda*g.y + mue*g.x), (1/b)*(lambda*g.x - mue*g.y))
+                },
+
+                get etheta() {
+                    return {x: Math.cos(this.theta), y: Math.sin(this.theta)};
+                },
+
+                get psi() {
+                    var etheta = this.etheta;
+                    return Math.atan2((1/c)*(b*etheta.y - this.g.y), (1/c)*(b*etheta.x - this.g.x))
+                },
+
+                get epsi() {
+                    return {x: Math.cos(this.psi), y: Math.sin(this.psi)};
+                },
+
+
+                // Gelenkpunkte
+                get B0() {
+                    return {x: A0.x + d, y: A0.y + e};
+                },
+
+                get A() {
+                    return {x: A0.x + a*this.ephi.x, y: A0.y + a*this.ephi.y};
+                },
+
+                get B() {
+                    return {x: this.B0.x + c*this.epsi.x, y: this.B0.y + c*this.epsi.y};
+                }
+            },
+
+            g = g2(),
+            world = g2().clr().cartesian().grid()
+                        .pan(a + 10, a + 10)
+                        .style({ls: "black", lw: 3, ld: [], ml:5})
+                        .use(g)
+                        .use("nodfix", {x: A0.x, y: A0.y})
+                        .use("nodfix", {x: mec.B0.x, y: mec.B0.y})
+    ;
+
+
+    function position(phi) {
+        var
+        ephi = mec.ephi,
+        etheta = mec.etheta,
+        epsi = mec.epsi,
+        A = mec.A,
+        B = mec.B,
+        B0 = mec.B0;
+
+        g.del()
+       //  .ply([A0.x, A0.y, A.x, A.y, B.x, B.y, B0.x, B0.y])
+         .lin(A0.x, A0.y, A.x, A.y)
+         .lin(A.x, A.y, B.x, B.y)
+         .lin(B.x, B.y, B0.x, B0.y)
+         .style({fs: "@nodfill"})
+         .cir(A.x, A.y, 5)
+         .cir(B.x, B.y, 5);
+    }
+
+    function setPhi() {  // set user controlled angle.
+        phi = (output.value = range.value) / 180 * Math.PI;
+    }
+
+    function render() {
+        position(phi);
+        world.exe(ctx);
+        requestAnimationFrame(render);
+    }
+
+
+    cnv.width = 2*a + c + d;
+    cnv.height = 2*a + c + e;
+    range.style.width = cnv.width-45 + "px";
+    range.addEventListener("input", setPhi, false);
+    render();
+
+</script>
+</body>
+</html>
