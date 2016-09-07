@@ -45,7 +45,7 @@
                 },
 
                 get gg() {
-                    return a*a + d*d - 2*a*this.d2*Math.cos(this.alpha - phi);
+                    return a*a + this.d2*this.d2 - 2*a*this.d2*Math.cos(this.alpha - phi);
                 },
 
                 get d2() {
