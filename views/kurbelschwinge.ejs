@@ -137,7 +137,7 @@
 
     cnv.width = 2*a + c + d;
     cnv.height = 2*a + c + e;
-    range.style.width = cnv.width-45 + "px";
+    range.style.width = (cnv.width<1000) ? cnv.width-45 + "px" : 1000 + "px" ;
     range.addEventListener("input", setPhi, false);
     render();
 
